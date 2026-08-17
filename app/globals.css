@@ -1,0 +1,26 @@
+@import './styles.css';
+@import './pages.css';
+
+/* Patch konversi Next.js: kelas body dipindah ke wrapper div karena <body>
+   hanya boleh dirender di root layout. */
+body.page-body,
+.page-body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--page-ink);
+  background: var(--page-bg);
+  font-family: var(--page-body);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.page-body::before,
+.page-body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  background: radial-gradient(circle at 85% -5%, rgba(201, 244, 108, 0.08), transparent 28rem),
+    radial-gradient(circle at 5% 70%, rgba(142, 186, 255, 0.045), transparent 24rem);
+}
