@@ -66,7 +66,7 @@ export default async function NotificationsPage() {
           />
           <div className="privacy-callout">
             <span>i</span>
-            <p><b>Catatan rilis:</b> alur notifikasi lengkap (scheduler harian yang membuat job &amp; email) aktif setelah deployment edge function <code>schedule-recurring-reminders</code>.</p>
+            <p><b>Catatan rilis:</b> scheduler backend (edge function <code>schedule-recurring-reminders</code>, tiap 6 jam) membuat pengingat berulang &amp; peringatan ambang anggaran secara otomatis.</p>
           </div>
         </section>
       </div>
