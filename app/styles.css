@@ -102,8 +102,17 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .topbar-actions { display: flex; align-items: center; gap: 20px; }
 .icon-button { position: relative; color: #9aaa9e; background: transparent; font-size: 22px; }
 .notification-button i { position: absolute; top: 1px; right: -1px; width: 5px; height: 5px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 9px rgba(255, 156, 121, 0.75); }
+.profile-menu { position: relative; }
 .profile-button { display: flex; align-items: center; gap: 9px; color: var(--ink); background: transparent; font-size: 11px; }
 .profile-name { font-weight: 600; }
+.profile-button .chevron { transition: transform 180ms ease; }
+.profile-menu.is-open .profile-button .chevron { transform: rotate(180deg); }
+.profile-dropdown { position: absolute; z-index: 6; top: calc(100% + 10px); right: 0; display: grid; width: min(220px, calc(100vw - 32px)); gap: 2px; padding: 7px; border: 1px solid var(--line-strong); border-radius: 11px; background: var(--surface); box-shadow: var(--shadow); }
+.profile-dropdown-link, .profile-menu-logout { display: flex; align-items: center; gap: 9px; width: 100%; min-height: 38px; padding: 0 10px; border-radius: 7px; color: var(--muted-strong); background: transparent; font-size: 11px; font-weight: 600; text-align: left; }
+.profile-dropdown-link:hover, .profile-menu-logout:hover { color: var(--ink); background: rgba(201, 244, 108, 0.1); }
+.profile-menu-logout { color: var(--danger); }
+.profile-menu-logout:disabled { cursor: wait; opacity: 0.6; }
+.profile-dropdown-divider { height: 1px; margin: 5px 4px; background: var(--line); }
 
 .content-wrap { width: min(1440px, 100%); margin: 0 auto; padding: 42px clamp(22px, 3.7vw, 60px) 32px; }
 .page-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 31px; }

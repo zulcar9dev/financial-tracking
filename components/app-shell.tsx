@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import LogoutButton from '@/components/logout-button'
+import ProfileMenu from '@/components/profile-menu'
 import { initialsOf } from '@/lib/format'
 import type { Profile } from '@/lib/types'
 
@@ -91,7 +91,6 @@ export default function AppShell({
         </nav>
 
         <div className="sidebar-footer">
-          <LogoutButton className="logout-button" />
           <div className="privacy-note"><span className="lock-icon">⌑</span><span><strong>Data Anda tetap privat</strong><small>Hanya Anda yang dapat mengaksesnya.</small></span></div>
           <Link href="/app/notifications" className="help-link"><span>?</span>Pusat bantuan <span>↗</span></Link>
         </div>
@@ -108,11 +107,7 @@ export default function AppShell({
               <span>◌</span>
               {unreadCount > 0 ? <i aria-hidden="true"></i> : null}
             </Link>
-            <Link className="profile-button" href="/app/settings/profile">
-              <span className="avatar">{initial}</span>
-              <span className="profile-name">{displayName}</span>
-              <span className="chevron">⌄</span>
-            </Link>
+            <ProfileMenu displayName={displayName} initial={initial} />
           </div>
         </header>
 
