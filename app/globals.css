@@ -10,7 +10,7 @@ body.page-body,
   color: var(--page-ink);
   background: var(--page-bg);
   font-family: var(--page-body);
-  font-size: 13px;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
 }
 

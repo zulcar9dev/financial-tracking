@@ -72,3 +72,69 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .account-page-card .account-logo { color: var(--page-acid); font: 700 14px var(--page-display); letter-spacing: -.08em; }
 .account-page-card.featured .account-logo { color: var(--page-acid-ink); }
 .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }.category-card { display: flex; align-items: center; gap: 10px; min-height: 69px; padding: 12px; border: 1px solid var(--page-line); border-radius: 8px; background: rgba(255, 255, 255, .035); }.category-dot { width: 11px; height: 11px; flex: 0 0 auto; border-radius: 4px; background: var(--page-violet); }.category-dot.income { background: var(--page-acid); }.category-dot.utility { background: var(--page-amber); }.category-dot.health { background: var(--page-coral); }.category-card strong, .category-card small { display: block; }.category-card strong { font-size: 10px; }.category-card small { margin-top: 3px; color: #718177; font: 400 8px var(--page-mono); }.category-card .category-actions { margin-left: auto; color: #718177; font-size: 14px; }.category-card.archived { opacity: .48; }.category-new { display: flex; align-items: center; justify-content: center; min-height: 69px; border: 1px dashed rgba(201, 244, 108, .35); border-radius: 8px; color: var(--page-acid); background: rgba(201, 244, 108, .04); font-size: 10px; font-weight: 700; }
+
+/* Type scale: improve readability without changing the visual hierarchy. */
+body.page-body { font-size: 14px; }
+.page-brand { font-size: 16px; }
+.public-links, .text-link, .page-button { font-size: 12px; }
+.public-footer { font-size: 10px; }
+.landing-proof { font-size: 11px; }
+.landing-copy { font-size: 15px; }
+.landing-kicker, .page-kicker, .surface-kicker { font-size: 10px; }
+.preview-top { font-size: 10px; }
+.preview-greeting small, .preview-metric span, .preview-metric small { font-size: 9px; }
+.value-card p { font-size: 12px; }
+.auth-visual-copy p { font-size: 14px; }
+.auth-note, .auth-help, .auth-switch, .check-row { font-size: 11px; }
+.auth-form-wrap > p { font-size: 13px; }
+.field label, .field small { font-size: 11px; }
+.input, .select, .textarea { font-size: 12px; }
+.legal-intro { font-size: 14px; }
+.legal-toc { font-size: 11px; }
+.legal-section p, .legal-section li { font-size: 13px; }
+.page-workspace-copy strong, .page-nav a, .page-profile, .page-breadcrumb { font-size: 12px; }
+.page-workspace-copy small, .page-sidebar-footer, .page-sidebar-footer small { font-size: 11px; }
+.page-nav-label { font-size: 10px; }
+.page-heading p { font-size: 13px; }
+.surface-card h2 { font-size: 16px; }
+.surface-card h3 { font-size: 14px; }
+.surface-card > p, .surface-header p { font-size: 11px; }
+.surface-link, .status-pill { font-size: 11px; }
+.filter-bar .input, .filter-bar .select { font-size: 11px; }
+.data-table th { font-size: 9px; }
+.data-table td, .data-table td strong { font-size: 11px; }
+.data-table td small { font-size: 9px; }
+.data-table .money { font-size: 11px; }
+.capture-tab, .model-tab { font-size: 11px; }
+.composer-card > p { font-size: 13px; }
+.composer-input input { font-size: 12px; }
+.review-quote, .review-grid strong { font-size: 11px; }
+.review-grid small { font-size: 9px; }
+.summary-mini span { font-size: 10px; }
+.summary-mini strong { font-size: 21px; }
+.summary-mini small { font-size: 9px; }
+.detail-hero p, .detail-value, .detail-side-row { font-size: 11px; }
+.budget-total span, .budget-line-head, .threshold-row { font-size: 11px; }
+.budget-total small, .budget-line-head strong, .budget-line-foot { font-size: 9px; }
+.recurring-row strong, .notification-row strong { font-size: 11px; }
+.recurring-row small, .notification-row small, .notification-time { font-size: 9px; }
+.preference-row strong { font-size: 11px; }
+.preference-row small { font-size: 10px; }
+.settings-menu a { font-size: 11px; }
+.profile-banner h2 { font-size: 18px; }
+.profile-banner p, .data-card p { font-size: 11px; }
+.category-card strong, .category-new { font-size: 11px; }
+.category-card small { font-size: 9px; }
+
+@media (max-width: 760px) {
+  .public-actions .page-button { font-size: 10px; }
+  .landing-copy { font-size: 13px; }
+  .auth-visual-copy p { font-size: 12px; }
+  .page-heading h1 { font-size: 34px; }
+  .page-heading p { font-size: 12px; }
+  .mobile-page-nav a { font-size: 9px; }
+  .summary-mini span { font-size: 9px; }
+  .summary-mini strong { font-size: 18px; }
+  .data-table td, .data-table td strong { font-size: 10px; }
+  .category-grid { grid-template-columns: 1fr 1fr; }
+}

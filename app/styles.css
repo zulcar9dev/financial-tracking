@@ -283,3 +283,48 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
 }
+
+/* Type scale: improve readability without changing the visual hierarchy. */
+body { font-size: 14px; }
+.brand { font-size: 16px; }
+.workspace-copy strong, .profile-name, .breadcrumb, .profile-button { font-size: 12px; }
+.workspace-copy small, .privacy-note small, .help-link { font-size: 11px; }
+.nav-label, .eyebrow { font-size: 10px; }
+.nav-item, .button, .period-tab { font-size: 12px; }
+.nav-item kbd, .count-badge { font-size: 10px; }
+.privacy-note strong { font-size: 11px; }
+.intro-copy { font-size: 13px; }
+.date-filter { font-size: 11px; }
+.metric-label { font-size: 11px; }
+.metric-foot { font-size: 10px; }
+.ai-tag { font-size: 9px; }
+.capture-copy p, .capture-form label { font-size: 11px; }
+.capture-input input { font-size: 12px; }
+.capture-links { font-size: 10px; }
+.panel h2 { font-size: 16px; }
+.panel-header p, .text-button, .panel-link { font-size: 11px; }
+.donut-chart small, .legend-list small, .budget-meta { font-size: 9px; }
+.legend-list li, .legend-list strong, .budget-title, .budget-title strong { font-size: 11px; }
+.budget-alert { font-size: 10px; }
+.transaction-info strong, .amount { font-size: 11px; }
+.transaction-info small, .review-note { font-size: 9px; }
+.review-time, .confidence { font-size: 10px; }
+.review-source { font-size: 11px; }
+.review-fields small { font-size: 9px; }
+.review-fields strong { font-size: 11px; }
+.review-actions .button { font-size: 10px; }
+.health-copy strong { font-size: 11px; }
+.health-copy small, .balance-context, .prompt-chips span { font-size: 9px; }
+.panel-kicker { font-size: 9px; }
+.trend-badge { font-size: 10px; }
+.trend-summary span, .chart-footer { font-size: 9px; }
+.chart-axis { font-size: 8px; }
+.account-type { font-size: 8px; }
+.account-bottom { font-size: 9px; }
+
+@media (max-width: 760px) {
+  .mobile-nav a { font-size: 9px; }
+  .metric-label { font-size: 10px; }
+  .legend-list li, .legend-list strong { font-size: 10px; }
+  .review-fields strong { font-size: 10px; }
+}
