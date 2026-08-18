@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArrowLeft, ArrowRight, PlusCircle, Receipt } from '@phosphor-icons/react/ssr'
 import TransactionFilters from '@/components/transaction-filters'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getAccounts, getCategories, getProfile, getTransactions } from '@/lib/db'
@@ -44,7 +45,7 @@ export default async function TransactionsPage({
           <p>Riwayat lengkap transaksi confirmed dari semua akun.</p>
         </div>
         <div className="heading-actions">
-          <Link className="page-button primary" href="/app/capture"><span>＋</span> Catat transaksi</Link>
+          <Link className="page-button primary" href="/app/capture"><PlusCircle className="finance-icon" size={17} weight="regular" aria-hidden="true" /> Catat transaksi</Link>
         </div>
       </section>
 
@@ -59,10 +60,10 @@ export default async function TransactionsPage({
         {rows.length === 0 ? (
           <div className="empty-state">
             <div>
-              <span className="empty-mark">≡</span>
+              <Receipt className="empty-mark" size={38} weight="duotone" aria-hidden="true" />
               <h2>Belum ada transaksi</h2>
               <p>Transaksi yang Anda catat akan muncul di sini. Mulai dengan mencatat pengeluaran atau pendapatan pertama.</p>
-              <Link className="page-button primary" href="/app/capture"><span>＋</span> Catat transaksi</Link>
+              <Link className="page-button primary" href="/app/capture"><PlusCircle className="finance-icon" size={17} weight="regular" aria-hidden="true" /> Catat transaksi</Link>
             </div>
           </div>
         ) : (
@@ -81,7 +82,7 @@ export default async function TransactionsPage({
                 {rows.map((t) => {
                   const legs = t.legs ?? []
                   const accountLabel = t.transaction_type === 'transfer'
-                    ? `${accountName(legs.find((l) => l.direction === 'out')?.account_id ?? '')} → ${accountName(legs.find((l) => l.direction === 'in')?.account_id ?? '')}`
+                     ? `${accountName(legs.find((l) => l.direction === 'out')?.account_id ?? '')} ke ${accountName(legs.find((l) => l.direction === 'in')?.account_id ?? '')}`
                     : legs.map((l) => accountName(l.account_id)).join(', ') || '—'
                   const amountClass = t.transaction_type === 'income' ? 'income' : t.transaction_type === 'expense' ? 'money' : ''
                   const sign = t.transaction_type === 'income' ? '+' : t.transaction_type === 'expense' ? '−' : '⇄'
@@ -117,10 +118,10 @@ export default async function TransactionsPage({
               Halaman {page} dari {totalPages}
             </span>
             {page > 1 ? (
-              <Link className="page-button ghost" href={`/app/transactions?page=${page - 1}${sp.q ? `&q=${sp.q}` : ''}${sp.type ? `&type=${sp.type}` : ''}${sp.account ? `&account=${sp.account}` : ''}${sp.category ? `&category=${sp.category}` : ''}`}>← Sebelumnya</Link>
+              <Link className="page-button ghost" href={`/app/transactions?page=${page - 1}${sp.q ? `&q=${sp.q}` : ''}${sp.type ? `&type=${sp.type}` : ''}${sp.account ? `&account=${sp.account}` : ''}${sp.category ? `&category=${sp.category}` : ''}`}><ArrowLeft className="finance-icon" size={15} weight="regular" aria-hidden="true" /> Sebelumnya</Link>
             ) : null}
             {page < totalPages ? (
-              <Link className="page-button primary" href={`/app/transactions?page=${page + 1}${sp.q ? `&q=${sp.q}` : ''}${sp.type ? `&type=${sp.type}` : ''}${sp.account ? `&account=${sp.account}` : ''}${sp.category ? `&category=${sp.category}` : ''}`}>Berikutnya →</Link>
+              <Link className="page-button primary" href={`/app/transactions?page=${page + 1}${sp.q ? `&q=${sp.q}` : ''}${sp.type ? `&type=${sp.type}` : ''}${sp.account ? `&account=${sp.account}` : ''}${sp.category ? `&category=${sp.category}` : ''}`}>Berikutnya <ArrowRight className="finance-icon" size={15} weight="regular" aria-hidden="true" /></Link>
             ) : null}
           </div>
         ) : null}

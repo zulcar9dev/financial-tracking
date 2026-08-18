@@ -1,4 +1,5 @@
 import BudgetForm from '@/components/budget-form'
+import { CalendarBlank, ChartDonut, Warning } from '@phosphor-icons/react/ssr'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getBudgetAllocations, getBudgets, getCategories, getConfirmedExpenseTransactions, getProfile } from '@/lib/db'
 import { computeBudgets } from '@/lib/budget'
@@ -52,7 +53,7 @@ export default async function BudgetsPage() {
           {summaries.length === 0 ? (
             <div className="empty-state">
               <div>
-                <span className="empty-mark">◒</span>
+                <ChartDonut className="empty-mark" size={38} weight="duotone" aria-hidden="true" />
                 <h2>Belum ada anggaran</h2>
                 <p>Buat anggaran pertama untuk memantau batas pengeluaran per kategori.</p>
               </div>
@@ -82,7 +83,7 @@ export default async function BudgetsPage() {
                         const avail = a.allocated_amount_idr + (a.rollover_amount_idr ?? 0) - spent
                         return (
                           <div key={a.id} className="envelope">
-                            <div className="envelope-top"><span>{categories.find((c) => c.id === a.category_id)?.name ?? '—'}</span><span>{spent > a.allocated_amount_idr ? '⚠' : ''}</span></div>
+                            <div className="envelope-top"><span>{categories.find((c) => c.id === a.category_id)?.name ?? '—'}</span>{spent > a.allocated_amount_idr ? <Warning size={15} weight="duotone" aria-label="Anggaran terlampaui" /> : null}</div>
                             <strong>{formatIDRFull(avail)}</strong>
                             <small>sisa dari {formatIDRFull(a.allocated_amount_idr)}</small>
                           </div>
@@ -98,7 +99,7 @@ export default async function BudgetsPage() {
 
         <div style={{ display: 'grid', gap: 11, alignContent: 'start' }}>
           <section className="upcoming-card">
-            <span className="upcoming-date">◌ {monthLabel(now, profile?.timezone ?? 'Asia/Jakarta')}</span>
+            <span className="upcoming-date"><CalendarBlank size={15} weight="regular" aria-hidden="true" /> {monthLabel(now, profile?.timezone ?? 'Asia/Jakarta')}</span>
             <h2>Buat anggaran baru</h2>
             <p>Pilih model yang cocok: batas per kategori, batas total periode, atau alokasi envelope per kategori.</p>
           </section>

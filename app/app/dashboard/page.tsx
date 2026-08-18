@@ -1,4 +1,16 @@
 import Link from 'next/link'
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  ArrowsClockwise,
+  CalendarBlank,
+  ChartLine,
+  DownloadSimple,
+  PlusCircle,
+  TrendUp,
+  Wallet,
+  Warning,
+} from '@phosphor-icons/react/ssr'
 import PeriodTabs from '@/components/period-tabs'
 import { getCurrentUser } from '@/lib/insforge/server'
 import {
@@ -24,6 +36,7 @@ import {
   type PeriodKey,
 } from '@/lib/format'
 import type { PeriodKey as PeriodKeyT } from '@/lib/format'
+import { ACCOUNT_TYPE_ICONS, TRANSACTION_TYPE_ICONS } from '@/lib/finance-icons'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,38 +97,38 @@ export default async function DashboardPage({
           <p className="intro-copy">Ini ringkasan keuangan Anda untuk {monthLabel(now, timezone)}.</p>
         </div>
         <div className="intro-actions">
-          <Link className="button button-secondary" href="/app/settings/data"><span>↓</span> Ekspor data</Link>
-          <Link className="button button-primary" href="/app/capture"><span>＋</span> Catat transaksi</Link>
+          <Link className="button button-secondary" href="/app/settings/data"><DownloadSimple className="finance-icon" size={17} weight="regular" aria-hidden="true" /> Ekspor data</Link>
+          <Link className="button button-primary" href="/app/capture"><PlusCircle className="finance-icon" size={17} weight="regular" aria-hidden="true" /> Catat transaksi</Link>
         </div>
       </section>
 
       <section className="period-bar" aria-label="Filter periode">
         <PeriodTabs />
-        <span className="date-filter"><span>▣</span> {formatDateShort(bounds.from.toISOString(), timezone)} – {formatDateShort(bounds.to.toISOString(), timezone)}</span>
+        <span className="date-filter"><CalendarBlank className="finance-icon" size={16} weight="regular" aria-hidden="true" /> {formatDateShort(bounds.from.toISOString(), timezone)} – {formatDateShort(bounds.to.toISOString(), timezone)}</span>
       </section>
 
       <section className="metric-grid" aria-label="Ringkasan periode">
         <article className="metric-card balance-card">
-          <div className="metric-top"><span className="metric-label">Total saldo</span><span className="metric-icon balance-icon">◉</span></div>
+          <div className="metric-top"><span className="metric-label">Total saldo</span><span className="metric-icon balance-icon"><Wallet size={18} weight="duotone" aria-hidden="true" /></span></div>
           <strong className="metric-value">{formatIDR(totalBalance)}</strong>
-          <div className="metric-foot"><span className="status-positive">↗ {activeAccounts.length} akun aktif</span><span>semua saldo</span></div>
+          <div className="metric-foot"><span className="status-positive"><TrendUp size={13} weight="regular" aria-hidden="true" /> {activeAccounts.length} akun aktif</span><span>semua saldo</span></div>
           <div className="balance-context"><span>{activeAccounts.length} akun aktif</span><span>·</span><span>saldo berjalan</span></div>
           <div className="balance-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i}></i>)}</div>
         </article>
         <article className="metric-card">
-          <div className="metric-top"><span className="metric-label">Pendapatan</span><span className="metric-icon income-icon">↙</span></div>
+          <div className="metric-top"><span className="metric-label">Pendapatan</span><span className="metric-icon income-icon"><ArrowDownLeft size={18} weight="duotone" aria-hidden="true" /></span></div>
           <strong className="metric-value">{formatIDR(totals.income)}</strong>
           <div className="metric-foot"><span className="status-positive">masuk</span><span>periode ini</span></div>
           <div className="mini-line income-line" aria-hidden="true"><span></span></div>
         </article>
         <article className="metric-card">
-          <div className="metric-top"><span className="metric-label">Pengeluaran</span><span className="metric-icon expense-icon">↗</span></div>
+          <div className="metric-top"><span className="metric-label">Pengeluaran</span><span className="metric-icon expense-icon"><ArrowUpRight size={18} weight="duotone" aria-hidden="true" /></span></div>
           <strong className="metric-value">{formatIDR(totals.expense)}</strong>
           <div className="metric-foot"><span className="status-negative">keluar</span><span>periode ini</span></div>
           <div className="mini-line expense-line" aria-hidden="true"><span></span></div>
         </article>
         <article className="metric-card net-card">
-          <div className="metric-top"><span className="metric-label">Arus kas bersih</span><span className="metric-icon net-icon">⌁</span></div>
+          <div className="metric-top"><span className="metric-label">Arus kas bersih</span><span className="metric-icon net-icon"><ChartLine size={18} weight="duotone" aria-hidden="true" /></span></div>
           <strong className="metric-value">{formatIDR(Math.max(0, netFlow))}</strong>
           <div className="metric-foot">
             <span className={netFlow >= 0 ? 'status-positive' : 'status-negative'}>{netFlow >= 0 ? 'Sehat' : 'Defisit'}</span>
@@ -129,16 +142,16 @@ export default async function DashboardPage({
         <article className="panel accounts-panel">
           <div className="panel-header">
             <div><span className="panel-kicker">RUANG UANG</span><h2>Akun aktif</h2><p>Saldo berjalan dari transaksi confirmed.</p></div>
-            <Link className="round-link" href="/app/accounts" aria-label="Kelola akun">↗</Link>
+            <Link className="round-link" href="/app/accounts" aria-label="Kelola akun"><ArrowUpRight size={16} weight="regular" aria-hidden="true" /></Link>
           </div>
           {activeAccounts.length === 0 ? (
-            <p className="empty-hint">Belum ada akun. <Link className="text-button" href="/app/accounts">Buat akun pertama →</Link></p>
+            <p className="empty-hint">Belum ada akun. <Link className="text-button" href="/app/accounts">Buat akun pertama <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link></p>
           ) : (
             <div className="account-stack">
               {activeAccounts.slice(0, 3).map((account) => (
                 <div key={account.id} className={`account-card account-${account.account_type}`}>
                   <div className="account-top">
-                    <span className="account-logo">{account.icon ?? account.name.slice(0, 2).toUpperCase()}</span>
+                    {(() => { const AccountIcon = ACCOUNT_TYPE_ICONS[account.account_type]; return <span className="account-logo"><AccountIcon size={19} weight="duotone" aria-hidden="true" /></span> })()}
                     <span className="account-type">{account.account_type.replace('_', ' ').toUpperCase()}</span>
                   </div>
                   <strong>{formatIDR(account.balance_idr)}</strong>
@@ -150,7 +163,7 @@ export default async function DashboardPage({
               ))}
             </div>
           )}
-          <Link className="panel-link" href="/app/accounts">Lihat semua akun <span>→</span></Link>
+          <Link className="panel-link" href="/app/accounts">Lihat semua akun <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link>
         </article>
       </section>
 
@@ -176,13 +189,13 @@ export default async function DashboardPage({
               </ul>
             </div>
           )}
-          <Link className="panel-link" href="/app/transactions">Lihat semua transaksi <span>→</span></Link>
+          <Link className="panel-link" href="/app/transactions">Lihat semua transaksi <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link>
         </article>
 
         <article className="panel budget-panel">
-          <div className="panel-header"><div><h2>Status anggaran</h2><p>{monthLabel(now, timezone)} · semua model</p></div><Link className="text-button" href="/app/budgets">Kelola <span>→</span></Link></div>
+          <div className="panel-header"><div><h2>Status anggaran</h2><p>{monthLabel(now, timezone)} · semua model</p></div><Link className="text-button" href="/app/budgets">Kelola <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link></div>
           {summaries.length === 0 ? (
-            <p className="empty-hint">Belum ada anggaran. <Link className="text-button" href="/app/budgets">Buat anggaran →</Link></p>
+            <p className="empty-hint">Belum ada anggaran. <Link className="text-button" href="/app/budgets">Buat anggaran <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link></p>
           ) : (
             <>
               <div className="budget-list">
@@ -201,7 +214,7 @@ export default async function DashboardPage({
                 ))}
               </div>
               {overOrNear.length > 0 ? (
-                <div className="budget-alert"><span>!</span><p>Anggaran <strong>{overOrNear[0].budget.name}</strong> {overOrNear[0].status === 'over' ? 'telah melebihi batas' : 'hampir mencapai batas'}.</p><Link href="/app/budgets">Tinjau</Link></div>
+                <div className="budget-alert"><Warning size={17} weight="duotone" aria-hidden="true" /><p>Anggaran <strong>{overOrNear[0].budget.name}</strong> {overOrNear[0].status === 'over' ? 'telah melebihi batas' : 'hampir mencapai batas'}.</p><Link href="/app/budgets">Tinjau</Link></div>
               ) : null}
             </>
           )}
@@ -210,15 +223,15 @@ export default async function DashboardPage({
 
       <section className="lower-grid">
         <article className="panel transactions-panel">
-          <div className="panel-header"><div><h2>Transaksi terbaru</h2><p>Aktivitas terakhir yang tersimpan.</p></div><Link className="text-button" href="/app/transactions">Lihat semua <span>→</span></Link></div>
+          <div className="panel-header"><div><h2>Transaksi terbaru</h2><p>Aktivitas terakhir yang tersimpan.</p></div><Link className="text-button" href="/app/transactions">Lihat semua <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link></div>
           {recent.length === 0 ? (
-            <p className="empty-hint">Belum ada transaksi. <Link className="text-button" href="/app/capture">Catat transaksi pertama →</Link></p>
+            <p className="empty-hint">Belum ada transaksi. <Link className="text-button" href="/app/capture">Catat transaksi pertama <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link></p>
           ) : (
             <div className="transaction-list">
               {recent.map((t) => (
                 <Link key={t.id} className="transaction-row" href={`/app/transactions/${t.id}`}>
                   <span className={`transaction-symbol ${t.transaction_type === 'income' ? 'income-symbol' : t.transaction_type === 'transfer' ? 'bill-symbol' : 'food-symbol'}`}>
-                    {t.transaction_type === 'income' ? '↙' : t.transaction_type === 'transfer' ? '⇄' : '⌁'}
+                    {(() => { const TransactionIcon = TRANSACTION_TYPE_ICONS[t.transaction_type]; return <TransactionIcon size={18} weight="duotone" aria-hidden="true" /> })()}
                   </span>
                   <div className="transaction-info">
                     <strong>{t.merchant ?? 'Tanpa keterangan'}</strong>
@@ -234,14 +247,14 @@ export default async function DashboardPage({
         </article>
 
         <article className="panel recurring-panel">
-          <div className="panel-header"><div><h2>Berlangganan berikutnya</h2><p>Transaksi berulang yang akan datang.</p></div><Link className="text-button" href="/app/recurring">Kelola <span>→</span></Link></div>
+          <div className="panel-header"><div><h2>Berlangganan berikutnya</h2><p>Transaksi berulang yang akan datang.</p></div><Link className="text-button" href="/app/recurring">Kelola <ArrowUpRight size={13} weight="regular" aria-hidden="true" /></Link></div>
           {upcoming.length === 0 ? (
             <p className="empty-hint">Tidak ada transaksi berulang mendatang.</p>
           ) : (
             <div className="transaction-list">
               {upcoming.map((t) => (
                 <div key={t.id} className="transaction-row">
-                  <span className="transaction-symbol bill-symbol">↻</span>
+                  <span className="transaction-symbol bill-symbol"><ArrowsClockwise size={18} weight="duotone" aria-hidden="true" /></span>
                   <div className="transaction-info">
                     <strong>{t.name}</strong>
                     <small>{formatDateTime(t.next_occurrence_at, timezone)} · {t.frequency}</small>

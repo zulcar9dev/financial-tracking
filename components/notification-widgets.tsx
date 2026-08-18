@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { ArrowsClockwise, Bell, ChartDonut, Check } from '@phosphor-icons/react'
 import { markAllNotificationsReadAction, markNotificationReadAction, updateNotificationPreferencesAction } from '@/lib/actions/notifications'
 import type { NotificationJob } from '@/lib/types'
 
@@ -9,11 +10,12 @@ export function NotificationRow({ job }: { job: NotificationJob }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const unread = !job.read_at
+  const NotificationIcon = job.type.includes('budget') ? ChartDonut : job.type.includes('recurring') ? ArrowsClockwise : Bell
 
   return (
     <div className="notification-row" style={{ opacity: unread ? 1 : 0.55 }}>
       <span className={`notification-icon${job.channel === 'email' ? ' warning' : ''}`}>
-        {job.type === 'budget' ? '◒' : job.type === 'reminder' ? '↻' : '◌'}
+        <NotificationIcon size={19} weight="duotone" aria-hidden="true" />
       </span>
       <div>
         <strong>{job.title}</strong>
@@ -35,9 +37,9 @@ export function MarkAllReadButton() {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   return (
-    <button type="button" className="page-button ghost small" disabled={pending}
-      onClick={() => startTransition(async () => { await markAllNotificationsReadAction(); router.refresh() })}>
-      Tandai semua dibaca
+      <button type="button" className="page-button ghost small" disabled={pending}
+        onClick={() => startTransition(async () => { await markAllNotificationsReadAction(); router.refresh() })}>
+      <Check className="finance-icon" size={15} weight="regular" aria-hidden="true" /> Tandai semua dibaca
     </button>
   )
 }

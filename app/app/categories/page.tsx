@@ -1,3 +1,4 @@
+import { PlusCircle } from '@phosphor-icons/react/ssr'
 import { CategoryActions, CategoryForm } from '@/components/category-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getCategories } from '@/lib/db'
@@ -37,7 +38,7 @@ export default async function CategoriesPage() {
               <CategoryActions category={category} />
             </div>
           ))}
-          <a className="category-new" href="#new-category">＋ Tambah kategori</a>
+          <a className="category-new" href="#new-category"><PlusCircle size={18} weight="duotone" aria-hidden="true" /> Tambah kategori</a>
         </div>
       </section>
 

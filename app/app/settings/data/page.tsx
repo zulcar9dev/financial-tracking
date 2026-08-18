@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Database, UserCircle } from '@phosphor-icons/react/ssr'
 import { DangerZone, ExportButtons } from '@/components/data-settings'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getProfile } from '@/lib/db'
@@ -23,8 +24,8 @@ export default async function SettingsDataPage() {
 
       <div className="settings-layout">
         <nav className="settings-menu surface-card">
-          <Link href="/app/settings/profile">Profil</Link>
-          <Link className="active" href="/app/settings/data">Data &amp; privasi</Link>
+          <Link href="/app/settings/profile"><UserCircle size={16} weight="regular" aria-hidden="true" /> Profil</Link>
+          <Link className="active" href="/app/settings/data"><Database size={16} weight="regular" aria-hidden="true" /> Data &amp; privasi</Link>
         </nav>
 
         <div className="settings-content">

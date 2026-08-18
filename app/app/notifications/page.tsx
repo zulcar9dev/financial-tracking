@@ -1,3 +1,4 @@
+import { Bell, Info } from '@phosphor-icons/react/ssr'
 import { MarkAllReadButton, NotificationRow, PreferencesForm } from '@/components/notification-widgets'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getNotificationJobs, getNotificationPreferences } from '@/lib/db'
@@ -36,7 +37,7 @@ export default async function NotificationsPage() {
           {jobs.length === 0 ? (
             <div className="empty-state">
               <div>
-                <span className="empty-mark">◌</span>
+                <Bell className="empty-mark" size={38} weight="duotone" aria-hidden="true" />
                 <h2>Belum ada notifikasi</h2>
                 <p>Pengingat berulang dan peringatan anggaran akan muncul di sini.</p>
               </div>
@@ -65,7 +66,7 @@ export default async function NotificationsPage() {
             }}
           />
           <div className="privacy-callout">
-            <span>i</span>
+            <Info size={17} weight="duotone" aria-hidden="true" />
             <p><b>Catatan rilis:</b> scheduler backend (edge function <code>schedule-recurring-reminders</code>, tiap 6 jam) membuat pengingat berulang &amp; peringatan ambang anggaran secara otomatis.</p>
           </div>
         </section>

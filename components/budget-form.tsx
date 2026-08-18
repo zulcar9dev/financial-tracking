@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { Plus, X } from '@phosphor-icons/react'
 import { createBudgetAction, deleteBudgetAction, updateBudgetAction, type BudgetPayload } from '@/lib/actions/budgets'
 import { parseIDRInput } from '@/lib/format'
 import type { Budget, BudgetAllocation, BudgetModel, Category } from '@/lib/types'
@@ -183,12 +184,12 @@ export default function BudgetForm({
                     value={row.allocated} required
                     onChange={(e) => setRow(i, { allocated: e.target.value.replace(/\D/g, '') })} />
                   <button type="button" className="page-button ghost" aria-label="Hapus baris"
-                    onClick={() => setRows((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))}>✕</button>
+                     onClick={() => setRows((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))}><X size={16} weight="regular" aria-hidden="true" /></button>
                 </div>
               ))}
               <button type="button" className="page-button ghost" style={{ justifySelf: 'start' }}
                 onClick={() => setRows((prev) => [...prev, { category_id: '', allocated: '' }])}>
-                ＋ Tambah alokasi
+                <Plus size={16} weight="regular" aria-hidden="true" /> Tambah alokasi
               </button>
             </div>
           </div>

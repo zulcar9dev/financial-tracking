@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArrowsClockwise, CalendarBlank } from '@phosphor-icons/react/ssr'
 import TemplateForm, { TemplateActions } from '@/components/template-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getAccounts, getCategories, getProfile, getRecurringTemplates, getUpcomingRecurring } from '@/lib/db'
@@ -38,7 +39,7 @@ export default async function RecurringPage() {
           {templates.length === 0 ? (
             <div className="empty-state">
               <div>
-                <span className="empty-mark">↻</span>
+                <ArrowsClockwise className="empty-mark" size={38} weight="duotone" aria-hidden="true" />
                 <h2>Belum ada template</h2>
                 <p>Buat template untuk gaji, sewa, tagihan bulanan, atau transfer rutin.</p>
               </div>
@@ -47,11 +48,11 @@ export default async function RecurringPage() {
             <div className="recurring-list">
               {templates.map((t) => {
                 const from = t.transaction_type === 'transfer'
-                  ? `${accounts.find((a) => a.id === t.transfer_from_id)?.name ?? '—'} → ${accounts.find((a) => a.id === t.transfer_to_id)?.name ?? '—'}`
+                  ? `${accounts.find((a) => a.id === t.transfer_from_id)?.name ?? '—'} ke ${accounts.find((a) => a.id === t.transfer_to_id)?.name ?? '—'}`
                   : accounts.find((a) => a.id === t.account_id)?.name ?? '—'
                 return (
                   <div key={t.id} className="recurring-row" style={{ opacity: t.is_active ? 1 : 0.5 }}>
-                    <span className="recurring-symbol">↻</span>
+                    <span className="recurring-symbol"><ArrowsClockwise size={19} weight="duotone" aria-hidden="true" /></span>
                     <div>
                       <strong>{t.name}</strong>
                       <small>
@@ -74,15 +75,15 @@ export default async function RecurringPage() {
         <div style={{ display: 'grid', gap: 11, alignContent: 'start' }}>
           {next ? (
             <section className="upcoming-card">
-              <span className="upcoming-date">◌ {formatDateTime(next.next_occurrence_at, timezone)}</span>
+              <span className="upcoming-date"><CalendarBlank size={15} weight="regular" aria-hidden="true" /> {formatDateTime(next.next_occurrence_at, timezone)}</span>
               <h2>{next.name}</h2>
               <p>Transaksi berulang berikutnya. Konfirmasi dengan menekan tombol jika sudah terjadi.</p>
               <div className="upcoming-amount">{formatIDRFull(next.amount_idr)}</div>
-              <Link className="page-button primary" href={`/app/recurring#new-template`}>↻ Kelola template</Link>
+              <Link className="page-button primary" href={`/app/recurring#new-template`}><ArrowsClockwise className="finance-icon" size={16} weight="regular" aria-hidden="true" /> Kelola template</Link>
             </section>
           ) : (
             <section className="upcoming-card">
-              <span className="upcoming-date">◌ Tidak ada jadwal</span>
+              <span className="upcoming-date"><CalendarBlank size={15} weight="regular" aria-hidden="true" /> Tidak ada jadwal</span>
               <h2>Buat template</h2>
               <p>Jadwalkan transaksi yang terjadi berulang agar pengingat muncul otomatis.</p>
             </section>

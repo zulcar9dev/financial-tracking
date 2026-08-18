@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft } from '@phosphor-icons/react/ssr'
 import TransactionForm from '@/components/transaction-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getAccounts, getCategories, getProfile, getTransaction } from '@/lib/db'
@@ -27,7 +28,7 @@ export default async function EditTransactionPage({ params }: { params: Promise<
           <p>Ubah detail transaksi; saldo akun dihitung ulang secara atomik.</p>
         </div>
         <div className="heading-actions">
-          <Link className="page-button ghost" href={`/app/transactions/${transaction.id}`}><span>←</span> Kembali</Link>
+          <Link className="page-button ghost" href={`/app/transactions/${transaction.id}`}><ArrowLeft className="finance-icon" size={15} weight="regular" aria-hidden="true" /> Kembali</Link>
         </div>
       </section>
 

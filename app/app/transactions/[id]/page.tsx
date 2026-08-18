@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft, PencilSimple } from '@phosphor-icons/react/ssr'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getProfile, getTransaction } from '@/lib/db'
 import { formatDateTime, formatIDRFull } from '@/lib/format'
+import { TRANSACTION_TYPE_ICONS } from '@/lib/finance-icons'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +21,7 @@ export default async function TransactionDetailPage({ params }: { params: Promis
 
   const legs = transaction.legs ?? []
   const accountLabel = transaction.transaction_type === 'transfer'
-    ? `${legs.find((l) => l.direction === 'out')?.account?.name ?? '—'} → ${legs.find((l) => l.direction === 'in')?.account?.name ?? '—'}`
+    ? `${legs.find((l) => l.direction === 'out')?.account?.name ?? '—'} ke ${legs.find((l) => l.direction === 'in')?.account?.name ?? '—'}`
     : legs.map((l) => l.account?.name).join(', ') || '—'
 
   const typeLabel = transaction.transaction_type === 'income'
@@ -37,7 +39,7 @@ export default async function TransactionDetailPage({ params }: { params: Promis
           <p>Informasi lengkap dan riwayat satu transaksi.</p>
         </div>
         <div className="heading-actions">
-          <Link className="page-button ghost" href="/app/transactions"><span>←</span> Kembali</Link>
+          <Link className="page-button ghost" href="/app/transactions"><ArrowLeft className="finance-icon" size={15} weight="regular" aria-hidden="true" /> Kembali</Link>
         </div>
       </section>
 
@@ -46,7 +48,7 @@ export default async function TransactionDetailPage({ params }: { params: Promis
           <div className="detail-hero">
             <span className={`detail-symbol${transaction.transaction_type === 'income' ? '' : ''}`}
               style={transaction.transaction_type === 'income' ? { color: '#c9f46c', background: 'rgba(201, 244, 108, .1)' } : {}}>
-              {transaction.transaction_type === 'income' ? '↙' : transaction.transaction_type === 'transfer' ? '⇄' : '⌁'}
+              {(() => { const TransactionIcon = TRANSACTION_TYPE_ICONS[transaction.transaction_type]; return <TransactionIcon size={24} weight="duotone" aria-hidden="true" /> })()}
             </span>
             <div>
               <h2>{transaction.merchant ?? 'Tanpa keterangan'}</h2>
@@ -101,7 +103,7 @@ export default async function TransactionDetailPage({ params }: { params: Promis
           </section>
 
           <Link className="page-button primary" href={`/app/transactions/${transaction.id}/edit`}>
-            ✎ Edit transaksi
+            <PencilSimple className="finance-icon" size={16} weight="regular" aria-hidden="true" /> Edit transaksi
           </Link>
         </div>
       </div>

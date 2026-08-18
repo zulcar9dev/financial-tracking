@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { FileText, Table, Trash } from '@phosphor-icons/react'
 import { deleteAccountAction, exportCsvAction, exportJsonAction } from '@/lib/actions/data'
 
 function download(fileName: string, content: string, mime: string) {
@@ -35,7 +36,7 @@ export function ExportButtons() {
   return (
     <div className="data-grid">
       <section className="surface-card data-card">
-        <span className="data-icon">≡</span>
+        <span className="data-icon"><FileText size={21} weight="duotone" aria-hidden="true" /></span>
         <h2>Ekspor JSON</h2>
         <p>Seluruh data Anda — akun, kategori, transaksi, legs, anggaran, template, dan preferensi — dalam satu file JSON.</p>
         <button className="page-button primary" disabled={pending} onClick={() => doExport('json')}>
@@ -43,7 +44,7 @@ export function ExportButtons() {
         </button>
       </section>
       <section className="surface-card data-card">
-        <span className="data-icon">▤</span>
+        <span className="data-icon"><Table size={21} weight="duotone" aria-hidden="true" /></span>
         <h2>Ekspor CSV</h2>
         <p>Riwayat transaksi (hingga 2.000 terbaru) dalam format CSV untuk spreadsheet.</p>
         <button className="page-button primary" disabled={pending} onClick={() => doExport('csv')}>
@@ -94,7 +95,7 @@ export function DangerZone() {
       </div>
       <div className="manual-footer">
         <button type="submit" className="page-button danger" disabled={pending}>
-          {pending ? 'Menghapus…' : 'Hapus akun & seluruh data'}
+           {pending ? 'Menghapus…' : <><Trash className="finance-icon" size={16} weight="regular" aria-hidden="true" /> Hapus akun &amp; seluruh data</>}
         </button>
       </div>
     </form>

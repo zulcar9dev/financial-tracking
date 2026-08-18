@@ -138,3 +138,27 @@ body.page-body { font-size: 14px; }
   .data-table td, .data-table td strong { font-size: 10px; }
   .category-grid { grid-template-columns: 1fr 1fr; }
 }
+
+.form-stack { display: grid; gap: 18px; }
+.form-stack .form-error { margin: 0; }
+.profile-form-wrap { margin-top: 20px; }
+.settings-content { min-width: 0; width: 100%; }
+.settings-menu a { display: flex; align-items: center; gap: 7px; min-height: 38px; }
+.profile-banner > div { min-width: 0; }
+.profile-banner p { overflow-wrap: anywhere; }
+
+@media (max-width: 760px) {
+  .settings-layout { grid-template-columns: 1fr; }
+  .settings-menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .settings-menu a { justify-content: center; text-align: center; }
+  .profile-banner { align-items: flex-start; }
+  .settings-footer { flex-wrap: wrap; }
+}
+
+.empty-mark { display: block; color: var(--page-acid); }
+.upcoming-date { display: inline-flex; align-items: center; gap: 5px; }
+.recurring-symbol { display: grid; place-items: center; }
+.upload-drop strong { display: inline-flex; align-items: center; gap: 7px; }
+.category-new { gap: 7px; }
+.data-icon svg, .detail-symbol svg { display: block; }
+.privacy-callout > svg { flex: 0 0 auto; color: var(--page-acid); }

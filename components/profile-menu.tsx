@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import { CaretDown, GearSix } from '@phosphor-icons/react'
 import LogoutButton from '@/components/logout-button'
 
 export default function ProfileMenu({
@@ -51,13 +52,13 @@ export default function ProfileMenu({
       >
         <span className="avatar">{initial}</span>
         <span className="profile-name">{displayName}</span>
-        <span className="chevron" aria-hidden="true">⌄</span>
+        <CaretDown className="chevron" size={16} weight="regular" aria-hidden="true" />
       </button>
 
       {open ? (
         <div id="profile-dropdown" className="profile-dropdown" aria-label="Menu akun">
           <Link className="profile-dropdown-link" href="/app/settings/profile" onClick={() => setOpen(false)}>
-            <span aria-hidden="true">⚙</span>
+            <GearSix size={16} weight="regular" aria-hidden="true" />
             Profil &amp; pengaturan
           </Link>
           <div className="profile-dropdown-divider" aria-hidden="true" />
