@@ -22,18 +22,3 @@ export async function updateProfileAction(formData: FormData): Promise<ActionRes
   revalidatePath('/app/dashboard')
   return { error: null }
 }
-
-export async function updateNotificationPreferencesAction(formData: FormData): Promise<ActionResult> {
-  const db = await createInsForgeServerClient()
-  const offset = Math.max(0, parseInt(String(formData.get('default_reminder_offset_minutes') ?? '1440'), 10) || 1440)
-  const { error } = await db.database.from('notification_preferences').update({
-    in_app_enabled: formData.get('in_app_enabled') === 'on',
-    email_enabled: formData.get('email_enabled') === 'on',
-    recurring_reminder_enabled: formData.get('recurring_reminder_enabled') === 'on',
-    budget_threshold_enabled: formData.get('budget_threshold_enabled') === 'on',
-    default_reminder_offset_minutes: offset,
-  })
-  if (error) return { error: error.message }
-  revalidatePath('/app/notifications')
-  return { error: null }
-}

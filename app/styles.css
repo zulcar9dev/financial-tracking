@@ -223,6 +223,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   body { padding-bottom: 72px; }
   .app-shell { display: block; }
   .sidebar { display: none; }
+  .app-shell.menu-open .sidebar { display: flex; position: fixed; z-index: 20; top: 0; bottom: 0; left: 0; width: 250px; max-width: 82vw; box-shadow: 0 0 44px rgba(0, 0, 0, 0.45); }
+  .sidebar-backdrop { position: fixed; z-index: 19; inset: 0; border: 0; padding: 0; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(3px); }
   .topbar { height: 62px; padding: 0 17px; }
   .mobile-menu { display: inline; margin-right: 3px; color: #91a097; font-size: 16px; }
   .profile-name, .profile-button .chevron { display: none; }

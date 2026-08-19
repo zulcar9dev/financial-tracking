@@ -209,7 +209,7 @@ export default function TemplateForm({
   )
 }
 
-export function TemplateActions({ template }: { template: RecurringTemplate }) {
+export function TemplateActions({ template, onEdit }: { template: RecurringTemplate; onEdit?: () => void }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -236,13 +236,26 @@ export function TemplateActions({ template }: { template: RecurringTemplate }) {
     })
   }
 
+  function remove() {
+    if (!window.confirm(`Hapus template "${template.name}"? Pengingat terkait akan ikut terhapus.`)) return
+    const fd = new FormData()
+    fd.set('id', template.id)
+    startTransition(async () => {
+      const result = await deleteTemplateAction(fd)
+      if (result.error) setError(result.error)
+      else router.refresh()
+    })
+  }
+
   return (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
       {error ? <small style={{ color: 'var(--page-coral)' }}>{error}</small> : null}
       <button type="button" className="page-button small" onClick={recordNow} disabled={pending}>Catat sekarang</button>
       <button type="button" className="page-button small" onClick={toggle} disabled={pending}>
         {template.is_active ? 'Jeda' : 'Aktifkan'}
       </button>
+      <button type="button" className="page-button small" onClick={onEdit} disabled={pending}>Edit</button>
+      <button type="button" className="page-button small danger" onClick={remove} disabled={pending}>Hapus</button>
     </div>
   )
 }

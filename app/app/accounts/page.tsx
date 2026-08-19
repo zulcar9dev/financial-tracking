@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { Archive, ArrowLeft, CheckCircle, PlusCircle } from '@phosphor-icons/react/ssr'
+import { Archive, ArrowLeft, PlusCircle } from '@phosphor-icons/react/ssr'
+import { AccountCard } from '@/components/account-card'
 import { AccountForm } from '@/components/account-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getAccountsWithBalances, getProfile } from '@/lib/db'
 import { formatDate, formatIDRFull } from '@/lib/format'
-import { ACCOUNT_TYPE_ICONS } from '@/lib/finance-icons'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,18 +31,7 @@ export default async function AccountsPage() {
 
       <section className="account-grid">
         {active.map((account, i) => (
-          <article key={account.id} className={`account-page-card${i === 0 ? ' featured' : ''}`}>
-            <div className="account-top">
-              {(() => { const AccountIcon = ACCOUNT_TYPE_ICONS[account.account_type]; return <span className="account-logo"><AccountIcon size={21} weight="duotone" aria-hidden="true" /></span> })()}
-              <span className="account-type">{account.account_type.replace('_', ' ').toUpperCase()}</span>
-            </div>
-            <div className="account-name">{account.name}</div>
-            <div className="account-balance">{formatIDRFull(account.balance_idr)}</div>
-            <div className="account-foot">
-              <span>Saldo awal {formatIDRFull(account.opening_balance_idr)}</span>
-              <span><CheckCircle size={13} weight="regular" aria-hidden="true" /> Aktif</span>
-            </div>
-          </article>
+          <AccountCard key={account.id} account={account} featured={i === 0} />
         ))}
         <a className="add-account" href="#new-account">
           <div><PlusCircle size={22} weight="duotone" aria-hidden="true" /><strong>Tambah akun baru</strong><small>Bank, tunai, dompet digital, atau kartu kredit</small></div>

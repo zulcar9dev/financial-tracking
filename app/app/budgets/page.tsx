@@ -1,17 +1,12 @@
 import BudgetForm from '@/components/budget-form'
-import { CalendarBlank, ChartDonut, Warning } from '@phosphor-icons/react/ssr'
+import { BudgetItem } from '@/components/budget-item'
+import { CalendarBlank, ChartDonut } from '@phosphor-icons/react/ssr'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getBudgetAllocations, getBudgets, getCategories, getConfirmedExpenseTransactions, getProfile } from '@/lib/db'
 import { computeBudgets } from '@/lib/budget'
 import { formatIDRFull, monthLabel, todayInTimezone } from '@/lib/format'
 
 export const dynamic = 'force-dynamic'
-
-const MODEL_LABEL: Record<string, string> = {
-  per_category: 'Per kategori',
-  flexible_period: 'Periode fleksibel',
-  envelope: 'Envelope',
-}
 
 export default async function BudgetsPage() {
   const user = await getCurrentUser()
@@ -27,6 +22,14 @@ export default async function BudgetsPage() {
   const totalAllocated = summaries.reduce((s, b) => s + b.allocated, 0)
   const totalSpent = summaries.reduce((s, b) => s + b.spent, 0)
   const now = todayInTimezone(profile?.timezone ?? 'Asia/Jakarta')
+
+  const allocationSpent: Record<string, number> = {}
+  for (const a of allocations) {
+    allocationSpent[a.id] = expenseTransactions
+      .filter((t) => t.category_id === a.category_id)
+      .filter((t) => t.occurred_at.slice(0, 10) >= a.period_start.slice(0, 10) && t.occurred_at.slice(0, 10) <= a.period_end.slice(0, 10))
+      .reduce((sum, t) => sum + t.amount_idr, 0)
+  }
 
   return (
     <div className="page-stack">
@@ -61,37 +64,7 @@ export default async function BudgetsPage() {
           ) : (
             <div className="budget-lines">
               {summaries.map((s) => (
-                <div key={s.budget.id}>
-                  <div className="budget-line-head">
-                    <span>{s.budget.name} <small style={{ color: '#718177', fontWeight: 400 }}>· {MODEL_LABEL[s.budget.budget_model]}</small></span>
-                    <strong>{s.usedPercent ?? 0}%</strong>
-                  </div>
-                  <div className={`budget-progress${s.status === 'over' ? ' coral' : s.status === 'near' ? ' amber' : ''}`}>
-                    <i style={{ width: `${Math.min(100, s.usedPercent ?? 0)}%` }}></i>
-                  </div>
-                  <div className="budget-line-foot">
-                    <span>{formatIDRFull(s.spent)} terpakai</span>
-                    <span>dari {formatIDRFull(s.allocated)}{s.budget.budget_model === 'envelope' ? ' + rollover' : ''}</span>
-                  </div>
-                  {s.budget.budget_model === 'envelope' && s.allocations.length > 0 ? (
-                    <div className="envelope-grid">
-                      {s.allocations.map((a) => {
-                        const spent = expenseTransactions
-                          .filter((t) => t.category_id === a.category_id)
-                          .filter((t) => t.occurred_at.slice(0, 10) >= a.period_start.slice(0, 10) && t.occurred_at.slice(0, 10) <= a.period_end.slice(0, 10))
-                          .reduce((sum, t) => sum + t.amount_idr, 0)
-                        const avail = a.allocated_amount_idr + (a.rollover_amount_idr ?? 0) - spent
-                        return (
-                          <div key={a.id} className="envelope">
-                            <div className="envelope-top"><span>{categories.find((c) => c.id === a.category_id)?.name ?? '—'}</span>{spent > a.allocated_amount_idr ? <Warning size={15} weight="duotone" aria-label="Anggaran terlampaui" /> : null}</div>
-                            <strong>{formatIDRFull(avail)}</strong>
-                            <small>sisa dari {formatIDRFull(a.allocated_amount_idr)}</small>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  ) : null}
-                </div>
+                <BudgetItem key={s.budget.id} summary={s} categories={categories} allocationSpent={allocationSpent} />
               ))}
             </div>
           )}

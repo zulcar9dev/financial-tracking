@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { createInsForgeServerClient } from '@/lib/insforge/server'
 import type { AccountType } from '@/lib/types'
 
@@ -94,8 +93,4 @@ export async function deleteAccountAction(formData: FormData): Promise<ActionRes
   if (error) return { error: error.message }
   revalidatePath('/app/accounts')
   return { error: null }
-}
-
-export async function goToAccounts() {
-  redirect('/app/accounts')
 }

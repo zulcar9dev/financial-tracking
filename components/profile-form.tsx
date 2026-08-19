@@ -13,7 +13,6 @@ const TIMEZONES = [
 
 const LOCALES = [
   { value: 'id-ID', label: 'Indonesia (id-ID)' },
-  { value: 'en-US', label: 'English (en-US)' },
 ]
 
 export default function ProfileForm({ profile, redirectTo }: { profile: Profile | null; redirectTo?: string }) {

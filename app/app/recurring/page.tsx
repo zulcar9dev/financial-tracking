@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowsClockwise, CalendarBlank } from '@phosphor-icons/react/ssr'
-import TemplateForm, { TemplateActions } from '@/components/template-form'
+import { TemplateItem } from '@/components/template-item'
+import TemplateForm from '@/components/template-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getAccounts, getCategories, getProfile, getRecurringTemplates, getUpcomingRecurring } from '@/lib/db'
 import { formatDateTime, formatIDRFull } from '@/lib/format'
@@ -46,28 +47,9 @@ export default async function RecurringPage() {
             </div>
           ) : (
             <div className="recurring-list">
-              {templates.map((t) => {
-                const from = t.transaction_type === 'transfer'
-                  ? `${accounts.find((a) => a.id === t.transfer_from_id)?.name ?? '—'} ke ${accounts.find((a) => a.id === t.transfer_to_id)?.name ?? '—'}`
-                  : accounts.find((a) => a.id === t.account_id)?.name ?? '—'
-                return (
-                  <div key={t.id} className="recurring-row" style={{ opacity: t.is_active ? 1 : 0.5 }}>
-                    <span className="recurring-symbol"><ArrowsClockwise size={19} weight="duotone" aria-hidden="true" /></span>
-                    <div>
-                      <strong>{t.name}</strong>
-                      <small>
-                        {t.frequency}{t.interval_value > 1 ? ` · setiap ${t.interval_value}` : ''} · {from}
-                        {t.end_date ? ` · s.d. ${t.end_date}` : ''} · berikutnya {formatDateTime(t.next_occurrence_at, timezone)}
-                        {!t.is_active ? ' · dijeda' : ''}
-                      </small>
-                    </div>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <strong className="recurring-amount">{formatIDRFull(t.amount_idr)}</strong>
-                      <TemplateActions template={t} />
-                    </div>
-                  </div>
-                )
-              })}
+              {templates.map((t) => (
+                <TemplateItem key={t.id} template={t} accounts={accounts} categories={categories} timezone={timezone} />
+              ))}
             </div>
           )}
         </section>

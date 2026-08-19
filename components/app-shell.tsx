@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 import type { Icon } from '@phosphor-icons/react'
 import {
   ArrowUpRight,
@@ -60,8 +61,11 @@ export default function AppShell({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
   const displayName = profile?.display_name ?? 'Pengguna'
   const initial = initialsOf(displayName)
+
+  const closeMenu = () => setMenuOpen(false)
 
   const firstSegment = pathname.replace(/^\//, '').split('/')[1] ?? 'dashboard'
   const title = TITLES[firstSegment] ?? 'Aplikasi'
@@ -75,9 +79,10 @@ export default function AppShell({
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${menuOpen ? ' menu-open' : ''}`}>
+      {menuOpen ? <button className="sidebar-backdrop" aria-label="Tutup menu" onClick={closeMenu}></button> : null}
       <aside className="sidebar" aria-label="Navigasi utama">
-        <Link className="brand" href="/app/dashboard" aria-label="Financial Tracking AI dashboard">
+        <Link className="brand" href="/app/dashboard" aria-label="Financial Tracking AI dashboard" onClick={closeMenu}>
           <span className="brand-mark" aria-hidden="true">ft</span>
           <span>financial<span>tracking</span></span>
         </Link>
@@ -91,7 +96,7 @@ export default function AppShell({
         <nav className="nav-list">
           <p className="nav-label">Ruang kerja</p>
           {NAV_MAIN.map((item) => (
-            <Link key={item.href} className={`nav-item${isActive(item.href) ? ' active' : ''}`} href={item.href}>
+            <Link key={item.href} className={`nav-item${isActive(item.href) ? ' active' : ''}`} href={item.href} onClick={closeMenu}>
               <span className="nav-icon"><item.icon size={17} weight="regular" aria-hidden="true" /></span>
               {item.label}
               {item.kbd ? <kbd>{item.kbd}</kbd> : null}
@@ -100,7 +105,7 @@ export default function AppShell({
 
           <p className="nav-label nav-label-spaced">Lainnya</p>
           {NAV_OTHER.map((item) => (
-            <Link key={item.href} className={`nav-item${isActive(item.href) ? ' active' : ''}`} href={item.href}>
+            <Link key={item.href} className={`nav-item${isActive(item.href) ? ' active' : ''}`} href={item.href} onClick={closeMenu}>
               <span className="nav-icon"><item.icon size={17} weight="regular" aria-hidden="true" /></span>
               {item.label}
               {item.badge && unreadCount > 0 ? <span className="count-badge">{unreadCount}</span> : null}
@@ -117,7 +122,7 @@ export default function AppShell({
       <main className="main-content">
         <header className="topbar">
           <div className="breadcrumb">
-            <button className="mobile-menu" aria-label="Buka menu"><DotsThree size={20} weight="bold" aria-hidden="true" /></button>
+            <button className="mobile-menu" aria-label="Buka menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><DotsThree size={20} weight="bold" aria-hidden="true" /></button>
             <span className="muted">Ruang pribadi</span><span className="slash">/</span><strong>{title}</strong>
           </div>
           <div className="topbar-actions">

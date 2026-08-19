@@ -1,5 +1,6 @@
 import { PlusCircle } from '@phosphor-icons/react/ssr'
-import { CategoryActions, CategoryForm } from '@/components/category-form'
+import { CategoryCard } from '@/components/category-card'
+import { CategoryForm } from '@/components/category-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getCategories } from '@/lib/db'
 
@@ -29,14 +30,7 @@ export default async function CategoriesPage() {
         </div>
         <div className="category-grid" style={{ marginTop: 18 }}>
           {active.map((category) => (
-            <div key={category.id} className="category-card">
-              <span className={`category-dot${category.category_kind === 'income' ? ' income' : category.name === 'Transportasi' ? ' utility' : category.name === 'Kesehatan' ? ' health' : ''}`} style={category.color ? { background: category.color } : undefined}></span>
-              <div>
-                <strong>{category.name}</strong>
-                <small>{category.category_kind}{category.is_system ? ' · system' : ''}</small>
-              </div>
-              <CategoryActions category={category} />
-            </div>
+            <CategoryCard key={category.id} category={category} />
           ))}
           <a className="category-new" href="#new-category"><PlusCircle size={18} weight="duotone" aria-hidden="true" /> Tambah kategori</a>
         </div>
@@ -50,14 +44,7 @@ export default async function CategoriesPage() {
           </div>
           <div className="category-grid" style={{ marginTop: 18 }}>
             {archived.map((category) => (
-              <div key={category.id} className="category-card archived">
-                <span className="category-dot" style={category.color ? { background: category.color } : undefined}></span>
-                <div>
-                  <strong>{category.name}</strong>
-                  <small>{category.category_kind}{category.is_system ? ' · system' : ''}</small>
-                </div>
-                <CategoryActions category={category} archived />
-              </div>
+              <CategoryCard key={category.id} category={category} archived />
             ))}
           </div>
         </section>
