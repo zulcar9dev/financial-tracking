@@ -51,7 +51,10 @@ export default async function CapturePage() {
           <span className="status-pill warning">Segera hadir</span>
         </div>
         <div className="upload-drop" style={{ marginTop: 18 }}>
-          <div><strong><UploadSimple className="finance-icon" size={18} weight="duotone" aria-hidden="true" /> Upload foto struk</strong><small>Menunggu rilis AI — striktur teks belum tersedia.</small></div>
+          <div className="upload-inner">
+            <strong><UploadSimple className="finance-icon" size={18} weight="duotone" aria-hidden="true" /> Upload foto struk</strong>
+            <small>Menunggu rilis AI — struktur teks belum tersedia.</small>
+          </div>
         </div>
       </section>
     </div>

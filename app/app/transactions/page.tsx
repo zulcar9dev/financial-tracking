@@ -1,6 +1,8 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, PlusCircle, Receipt } from '@phosphor-icons/react/ssr'
 import TransactionFilters from '@/components/transaction-filters'
+import TransactionFlash from '@/components/transaction-flash'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getAccounts, getCategories, getProfile, getTransactions } from '@/lib/db'
 import { formatDateTime, formatIDRFull } from '@/lib/format'
@@ -12,7 +14,7 @@ const PAGE_SIZE = 20
 export default async function TransactionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; type?: string; account?: string; category?: string; page?: string }>
+  searchParams: Promise<{ q?: string; type?: string; account?: string; category?: string; page?: string; hl?: string }>
 }) {
   const sp = await searchParams
   const user = await getCurrentUser()
@@ -38,6 +40,11 @@ export default async function TransactionsPage({
 
   return (
     <div className="page-stack">
+      {sp.hl ? (
+        <Suspense fallback={null}>
+          <TransactionFlash />
+        </Suspense>
+      ) : null}
       <section className="page-heading">
         <div>
           <span className="page-kicker">Ledger / {total} transaksi</span>
@@ -87,7 +94,7 @@ export default async function TransactionsPage({
                   const amountClass = t.transaction_type === 'income' ? 'income' : t.transaction_type === 'expense' ? 'money' : ''
                   const sign = t.transaction_type === 'income' ? '+' : t.transaction_type === 'expense' ? '−' : '⇄'
                   return (
-                    <tr key={t.id}>
+                    <tr key={t.id} className={t.id === sp.hl ? 'row-flash' : undefined}>
                       <td>
                         <Link href={`/app/transactions/${t.id}`} style={{ color: 'inherit' }}>
                           {formatDateTime(t.occurred_at, timezone)}

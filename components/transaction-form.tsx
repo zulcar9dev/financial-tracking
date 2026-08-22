@@ -112,10 +112,11 @@ export default function TransactionForm({
         setError(result.error)
         return
       }
-      formRef.current?.reset()
-      setAmountText('')
-      onDone?.()
-      router.refresh()
+      if (!result.id) {
+        setError('Transaksi gagal disimpan. Silakan coba lagi.')
+        return
+      }
+      router.push(`/app/transactions?hl=${result.id}${editing ? '&m=updated' : ''}`)
     })
   }
 

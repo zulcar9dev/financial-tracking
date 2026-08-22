@@ -42,7 +42,7 @@ export function AccountCard({ account, featured = false }: { account: AccountWit
         <span>Saldo awal {formatIDRFull(account.opening_balance_idr)}</span>
         <span><CheckCircle size={13} weight="regular" aria-hidden="true" /> Aktif</span>
       </div>
-      <div className="account-card-actions" style={{ display: 'flex', gap: 7, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="account-card-actions">
         <button type="button" className="page-button small" onClick={() => setEditing(true)}>
           <PencilSimple size={13} weight="regular" aria-hidden="true" /> Edit
         </button>
