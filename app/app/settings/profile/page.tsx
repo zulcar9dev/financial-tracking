@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Database, UserCircle } from '@phosphor-icons/react/ssr'
+import { Bell, Database, LockKey, ShieldCheck, Tag, UserCircle } from '@phosphor-icons/react/ssr'
 import ProfileForm from '@/components/profile-form'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getNotificationPreferences, getProfile } from '@/lib/db'
@@ -27,9 +27,12 @@ export default async function SettingsProfilePage() {
       </section>
 
       <div className="settings-layout">
-        <nav className="settings-menu surface-card">
+        <nav className="settings-menu surface-card" aria-label="Menu pengaturan">
           <Link className="active" href="/app/settings/profile"><UserCircle size={16} weight="regular" aria-hidden="true" /> Profil</Link>
+          <Link href="/app/notifications"><Bell size={16} weight="regular" aria-hidden="true" /> Notifikasi</Link>
+          <Link href="/app/categories"><Tag size={16} weight="regular" aria-hidden="true" /> Kategori</Link>
           <Link href="/app/settings/data"><Database size={16} weight="regular" aria-hidden="true" /> Data &amp; privasi</Link>
+          <Link href="/privacy"><ShieldCheck size={16} weight="regular" aria-hidden="true" /> Kebijakan privasi</Link>
         </nav>
 
         <div className="settings-content">
@@ -57,6 +60,13 @@ export default async function SettingsProfilePage() {
               <div className="detail-side-row"><span>Pengingat default</span><strong>{Math.round((prefs?.default_reminder_offset_minutes ?? 1440) / 1440)} hari sebelum jatuh tempo</strong></div>
             </div>
             <Link className="page-button ghost" href="/app/notifications">Kelola notifikasi</Link>
+          </section>
+
+          <section className="surface-card settings-section">
+            <div className="surface-header">
+              <div><span className="surface-kicker">Keamanan</span><h2>Session dan password</h2><p>Refresh session dikelola secara aman oleh sistem authentication.</p></div>
+              <Link className="page-button ghost" href="/forgot-password"><LockKey size={15} weight="regular" aria-hidden="true" /> Reset password</Link>
+            </div>
           </section>
         </div>
       </div>

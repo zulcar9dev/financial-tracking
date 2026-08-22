@@ -40,21 +40,27 @@ import { ACCOUNT_TYPE_ICONS, TRANSACTION_TYPE_ICONS } from '@/lib/finance-icons'
 
 export const dynamic = 'force-dynamic'
 
-const VALID: PeriodKeyT[] = ['this_month', 'last_month', 'last_30_days', 'this_year']
+const VALID: PeriodKeyT[] = ['this_month', 'last_month', 'last_30_days', 'this_year', 'custom']
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>
+  searchParams: Promise<{ period?: string; from?: string; to?: string }>
 }) {
-  const { period: periodParam } = await searchParams
-  const period = (VALID.includes(periodParam as PeriodKeyT) ? periodParam : 'this_month') as PeriodKey
+  const { period: periodParam, from: fromParam, to: toParam } = await searchParams
+  const hasCustom = Boolean(
+    fromParam && toParam && DATE_RE.test(fromParam) && DATE_RE.test(toParam) && toParam >= fromParam,
+  )
+  const period = (VALID.includes(periodParam as PeriodKeyT) && (periodParam !== 'custom' || hasCustom)
+    ? periodParam
+    : 'this_month') as PeriodKey
 
   const user = await getCurrentUser()
   const profile = await getProfile(user!.id)
   const timezone = profile?.timezone ?? 'Asia/Jakarta'
 
-  const bounds = periodRange(period, timezone)
+  const bounds = periodRange(period, timezone, period === 'custom' ? { from: fromParam!, to: toParam! } : undefined)
 
   const [accounts, totals, categorySpending, recent, budgets, allocations, upcoming, expenseTransactions] = await Promise.all([
     getAccountsWithBalances(user!.id),
@@ -94,7 +100,7 @@ export default async function DashboardPage({
         <div>
           <p className="eyebrow">{todayLabel}</p>
           <h1>{greeting}, {profile?.display_name ?? 'Pengguna'}.</h1>
-          <p className="intro-copy">Ini ringkasan keuangan Anda untuk {monthLabel(now, timezone)}.</p>
+          <p className="intro-copy">Ini ringkasan keuangan Anda untuk {period === 'custom' ? 'rentang tanggal terpilih' : monthLabel(now, timezone)}.</p>
         </div>
         <div className="intro-actions">
           <Link className="button button-secondary" href="/app/settings/data"><DownloadSimple className="finance-icon" size={17} weight="regular" aria-hidden="true" /> Ekspor data</Link>

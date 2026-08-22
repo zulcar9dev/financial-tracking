@@ -12,6 +12,7 @@ const MODES: { key: Mode; label: string }[] = [
   { key: 'expense', label: 'Pengeluaran' },
   { key: 'income', label: 'Pendapatan' },
   { key: 'transfer', label: 'Transfer' },
+  { key: 'adjustment', label: 'Penyesuaian' },
 ]
 
 export default function TransactionForm({
@@ -75,7 +76,10 @@ export default function TransactionForm({
       account_id: (String(fd.get('account_id') ?? '') as string) || null,
       transfer_from_id: (String(fd.get('transfer_from_id') ?? '') as string) || null,
       transfer_to_id: (String(fd.get('transfer_to_id') ?? '') as string) || null,
-      leg_direction: null,
+      leg_direction:
+        mode === 'adjustment'
+          ? (String(fd.get('leg_direction') ?? 'in') === 'out' ? 'out' : 'in')
+          : null,
       idempotency_key: editing ? undefined : idempotencyKey.current,
     }
 
@@ -185,7 +189,19 @@ export default function TransactionForm({
           </div>
         )}
 
-        {mode !== 'transfer' ? (
+        {mode === 'adjustment' ? (
+          <div className="field">
+            <label htmlFor="t-direction">Arah penyesuaian</label>
+            <select className="select" id="t-direction" name="leg_direction"
+              defaultValue={transaction?.legs?.[0]?.direction ?? 'in'}>
+              <option value="in">Tambah saldo (+)</option>
+              <option value="out">Kurangi saldo (−)</option>
+            </select>
+            <small>Koreksi saldo akun tanpa transaksi baru, mis. dana masuk tak tercatat.</small>
+          </div>
+        ) : null}
+
+        {mode !== 'transfer' && mode !== 'adjustment' ? (
           <div className="field">
             <label htmlFor="t-category">Kategori</label>
             <select className="select" id="t-category" name="category_id" defaultValue={transaction?.category_id ?? ''}>
@@ -218,7 +234,7 @@ export default function TransactionForm({
           Batal
         </button>
         <button type="submit" className="page-button primary" disabled={pending || activeAccounts.length === 0}>
-          {pending ? 'Menyimpan…' : editing ? 'Simpan perubahan' : mode === 'transfer' ? 'Konfirmasi transfer' : 'Konfirmasi & simpan'}
+          {pending ? 'Menyimpan…' : editing ? 'Simpan perubahan' : mode === 'transfer' ? 'Konfirmasi transfer' : mode === 'adjustment' ? 'Simpan penyesuaian' : 'Konfirmasi & simpan'}
         </button>
       </div>
 

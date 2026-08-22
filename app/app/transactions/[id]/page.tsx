@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, PencilSimple } from '@phosphor-icons/react/ssr'
+import { DeleteTransactionButton } from '@/components/delete-transaction-button'
 import { getCurrentUser } from '@/lib/insforge/server'
 import { getProfile, getTransaction } from '@/lib/db'
 import { formatDateTime, formatIDRFull } from '@/lib/format'
@@ -105,6 +106,7 @@ export default async function TransactionDetailPage({ params }: { params: Promis
           <Link className="page-button primary" href={`/app/transactions/${transaction.id}/edit`}>
             <PencilSimple className="finance-icon" size={16} weight="regular" aria-hidden="true" /> Edit transaksi
           </Link>
+          <DeleteTransactionButton id={transaction.id} />
         </div>
       </div>
     </div>

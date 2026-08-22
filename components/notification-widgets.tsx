@@ -1,16 +1,23 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowsClockwise, Bell, ChartDonut, Check } from '@phosphor-icons/react'
+import { ArrowUpRight, ArrowsClockwise, Bell, ChartDonut, Check } from '@phosphor-icons/react'
 import { markAllNotificationsReadAction, markNotificationReadAction, updateNotificationPreferencesAction } from '@/lib/actions/notifications'
 import type { NotificationJob } from '@/lib/types'
+
+const SOURCE_LINKS: Record<string, { href: string; label: string }> = {
+  recurring_template: { href: '/app/recurring', label: 'Buka template' },
+  budget: { href: '/app/budgets', label: 'Buka anggaran' },
+}
 
 export function NotificationRow({ job }: { job: NotificationJob }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const unread = !job.read_at
   const NotificationIcon = job.type.includes('budget') ? ChartDonut : job.type.includes('recurring') ? ArrowsClockwise : Bell
+  const sourceLink = job.source_type ? SOURCE_LINKS[job.source_type] : undefined
 
   return (
     <div className="notification-row" style={{ opacity: unread ? 1 : 0.55 }}>
@@ -20,6 +27,11 @@ export function NotificationRow({ job }: { job: NotificationJob }) {
       <div>
         <strong>{job.title}</strong>
         <small>{job.body}</small>
+        {sourceLink ? (
+          <Link href={sourceLink.href} className="text-button" style={{ display: 'inline-flex', marginTop: 4 }}>
+            {sourceLink.label} <ArrowUpRight size={12} weight="regular" aria-hidden="true" />
+          </Link>
+        ) : null}
       </div>
       {unread ? (
         <button type="button" className="page-button small" disabled={pending}
