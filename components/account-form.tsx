@@ -2,6 +2,8 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import AppSelect from '@/components/app-select'
+import { ACCOUNT_TYPE_ICONS } from '@/lib/finance-icons'
 import { createAccountAction, updateAccountAction, archiveAccountAction, deleteAccountAction } from '@/lib/actions/accounts'
 import { formatIDRFull } from '@/lib/format'
 import type { Account } from '@/lib/types'
@@ -50,9 +52,16 @@ export function AccountForm({ account, onDone }: { account?: Account; onDone?: (
 
       <div className="field">
         <label htmlFor="account-type">Tipe akun</label>
-        <select className="select" id="account-type" name="account_type" defaultValue={account?.account_type ?? 'bank'}>
-          {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
+        <AppSelect
+          id="account-type"
+          name="account_type"
+          defaultValue={account?.account_type ?? 'bank'}
+          aria-label="Tipe akun"
+          options={TYPES.map((t) => {
+            const TypeIcon = ACCOUNT_TYPE_ICONS[t.value as keyof typeof ACCOUNT_TYPE_ICONS]
+            return { value: t.value, label: t.label, icon: <TypeIcon size={14} weight="regular" aria-hidden="true" /> }
+          })}
+        />
       </div>
 
       {!account ? (

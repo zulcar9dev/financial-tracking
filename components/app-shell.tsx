@@ -21,6 +21,7 @@ import {
   Wallet,
 } from '@phosphor-icons/react'
 import ProfileMenu from '@/components/profile-menu'
+import ThemeToggle from '@/components/theme-toggle'
 import { initialsOf } from '@/lib/format'
 import type { Profile } from '@/lib/types'
 
@@ -126,6 +127,7 @@ export default function AppShell({
             <span className="muted">Ruang pribadi</span><span className="slash">/</span><strong>{title}</strong>
           </div>
           <div className="topbar-actions">
+            <ThemeToggle />
             <Link className="icon-button notification-button" href="/app/notifications" aria-label="Buka notifikasi">
               <Bell size={21} weight="regular" aria-hidden="true" />
               {unreadCount > 0 ? <i aria-hidden="true"></i> : null}

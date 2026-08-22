@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import AppSelect from '@/components/app-select'
 import { archiveCategoryAction, createCategoryAction, reactivateCategoryAction, updateCategoryAction } from '@/lib/actions/categories'
 import type { Category } from '@/lib/types'
 
@@ -9,6 +10,15 @@ const KINDS = [
   { value: 'expense', label: 'Expense' },
   { value: 'income', label: 'Income' },
   { value: 'both', label: 'Both' },
+]
+
+const COLORS = [
+  { value: 'default', label: 'Default', dot: null },
+  { value: '#c9f46c', label: 'Lime', dot: '#c9f46c' },
+  { value: '#8b5cf6', label: 'Violet', dot: '#8b5cf6' },
+  { value: '#e9a23b', label: 'Amber', dot: '#e9a23b' },
+  { value: '#f0593a', label: 'Coral', dot: '#f0593a' },
+  { value: '#5b8def', label: 'Blue', dot: '#5b8def' },
 ]
 
 export function CategoryForm({ category, onDone }: { category?: Category; onDone?: () => void }) {
@@ -21,6 +31,7 @@ export function CategoryForm({ category, onDone }: { category?: Category; onDone
     e.preventDefault()
     setError(null)
     const formData = new FormData(e.currentTarget)
+    if (formData.get('color') === 'default') formData.set('color', '')
     startTransition(async () => {
       const result = category ? await updateCategoryAction(formData) : await createCategoryAction(formData)
       if (result.error) {
@@ -46,21 +57,24 @@ export function CategoryForm({ category, onDone }: { category?: Category; onDone
 
       <div className="field">
         <label htmlFor="category-kind">Jenis</label>
-        <select className="select" id="category-kind" name="category_kind" defaultValue={category?.category_kind ?? 'expense'}>
-          {KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
-        </select>
+        <AppSelect
+          id="category-kind"
+          name="category_kind"
+          defaultValue={category?.category_kind ?? 'expense'}
+          aria-label="Jenis kategori"
+          options={KINDS}
+        />
       </div>
 
       <div className="field">
         <label htmlFor="category-color">Warna</label>
-        <select className="select" id="category-color" name="color" defaultValue={category?.color ?? ''}>
-          <option value="">Default</option>
-          <option value="#c9f46c">Lime</option>
-          <option value="#8b5cf6">Violet</option>
-          <option value="#e9a23b">Amber</option>
-          <option value="#f0593a">Coral</option>
-          <option value="#5b8def">Blue</option>
-        </select>
+        <AppSelect
+          id="category-color"
+          name="color"
+          defaultValue={category?.color || 'default'}
+          aria-label="Warna kategori"
+          options={COLORS}
+        />
       </div>
 
       <div className="manual-footer" style={{ gridColumn: '1 / -1' }}>

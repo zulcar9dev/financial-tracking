@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTransition } from 'react'
+import AppSelect from '@/components/app-select'
 import type { Account, Category } from '@/lib/types'
 
 export default function TransactionFilters({
@@ -44,24 +45,35 @@ export default function TransactionFilters({
           if (e.key === 'Enter') apply('q', (e.target as HTMLInputElement).value.trim())
         }}
       />
-      <select className="select" value={current.type} onChange={(e) => apply('type', e.target.value)} aria-label="Filter tipe">
-        <option value="">Semua tipe</option>
-        <option value="expense">Pengeluaran</option>
-        <option value="income">Pendapatan</option>
-        <option value="transfer">Transfer</option>
-      </select>
-      <select className="select" value={current.accountId} onChange={(e) => apply('account', e.target.value)} aria-label="Filter akun">
-        <option value="">Semua akun</option>
-        {accounts.filter((a) => a.is_active).map((a) => (
-          <option key={a.id} value={a.id}>{a.name}</option>
-        ))}
-      </select>
-      <select className="select" value={current.categoryId} onChange={(e) => apply('category', e.target.value)} aria-label="Filter kategori">
-        <option value="">Semua kategori</option>
-        {categories.filter((c) => c.is_active).map((c) => (
-          <option key={c.id} value={c.id}>{c.name}</option>
-        ))}
-      </select>
+      <AppSelect
+        value={current.type || 'all'}
+        onValueChange={(v) => apply('type', v === 'all' ? '' : v)}
+        aria-label="Filter tipe"
+        options={[
+          { value: 'all', label: 'Semua tipe' },
+          { value: 'expense', label: 'Pengeluaran' },
+          { value: 'income', label: 'Pendapatan' },
+          { value: 'transfer', label: 'Transfer' },
+        ]}
+      />
+      <AppSelect
+        value={current.accountId || 'all'}
+        onValueChange={(v) => apply('account', v === 'all' ? '' : v)}
+        aria-label="Filter akun"
+        options={[
+          { value: 'all', label: 'Semua akun' },
+          ...accounts.filter((a) => a.is_active).map((a) => ({ value: a.id, label: a.name })),
+        ]}
+      />
+      <AppSelect
+        value={current.categoryId || 'all'}
+        onValueChange={(v) => apply('category', v === 'all' ? '' : v)}
+        aria-label="Filter kategori"
+        options={[
+          { value: 'all', label: 'Semua kategori' },
+          ...categories.filter((c) => c.is_active).map((c) => ({ value: c.id, label: c.name, dot: c.color })),
+        ]}
+      />
       {(current.q || current.type || current.accountId || current.categoryId) ? (
         <button className="page-button ghost" type="button" onClick={() => {
           startTransition(() => router.push('/app/transactions'))

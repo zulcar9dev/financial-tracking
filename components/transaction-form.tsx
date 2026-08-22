@@ -2,6 +2,8 @@
 
 import { useMemo, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import AppSelect from '@/components/app-select'
+import { ACCOUNT_TYPE_ICONS } from '@/lib/finance-icons'
 import { confirmTransactionAction, updateTransactionAction, deleteTransactionAction, type ConfirmTransactionPayload } from '@/lib/actions/transactions'
 import { parseIDRInput } from '@/lib/format'
 import type { Account, Category, TransactionWithRelations } from '@/lib/types'
@@ -50,6 +52,15 @@ export default function TransactionForm({
 
   const categoriesForMode = mode === 'income' ? incomeCategories : expenseCategories
 
+  const accountOptions = useMemo(
+    () =>
+      activeAccounts.map((a) => {
+        const TypeIcon = ACCOUNT_TYPE_ICONS[a.account_type]
+        return { value: a.id, label: a.name, icon: <TypeIcon size={14} weight="regular" aria-hidden="true" /> }
+      }),
+    [activeAccounts],
+  )
+
   function onAmountInput(v: string) {
     const digits = v.replace(/\D/g, '').replace(/^0+(?=\d)/, '')
     setAmountText(digits)
@@ -64,6 +75,16 @@ export default function TransactionForm({
       setError('Nominal harus diisi dan lebih dari nol.')
       return
     }
+    if (mode === 'transfer' && (!String(fd.get('transfer_from_id') ?? '') || !String(fd.get('transfer_to_id') ?? ''))) {
+      setError('Pilih akun sumber dan tujuan terlebih dahulu.')
+      return
+    }
+    if (mode !== 'transfer' && mode !== 'adjustment' && !String(fd.get('account_id') ?? '')) {
+      setError('Pilih akun terlebih dahulu.')
+      return
+    }
+
+    const rawCategoryId = String(fd.get('category_id') ?? '')
 
     const payload: ConfirmTransactionPayload = {
       transaction_type: mode,
@@ -71,7 +92,7 @@ export default function TransactionForm({
       occurred_at: String(fd.get('occurred_at') ?? new Date().toISOString()),
       merchant: String(fd.get('merchant') ?? '').trim() || null,
       note: String(fd.get('note') ?? '').trim() || null,
-      category_id: (String(fd.get('category_id') ?? '') as string) || null,
+      category_id: rawCategoryId && rawCategoryId !== 'none' ? rawCategoryId : null,
       source: 'manual',
       account_id: (String(fd.get('account_id') ?? '') as string) || null,
       transfer_from_id: (String(fd.get('transfer_from_id') ?? '') as string) || null,
@@ -166,37 +187,54 @@ export default function TransactionForm({
           <>
             <div className="field">
               <label htmlFor="t-from">Akun sumber</label>
-              <select className="select" id="t-from" name="transfer_from_id" required defaultValue={transaction?.legs?.find((l) => l.direction === 'out')?.account_id ?? ''}>
-                <option value="" disabled>Pilih akun sumber…</option>
-                {activeAccounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
+              <AppSelect
+                id="t-from"
+                name="transfer_from_id"
+                defaultValue={transaction?.legs?.find((l) => l.direction === 'out')?.account_id ?? ''}
+                placeholder="Pilih akun sumber…"
+                aria-label="Akun sumber"
+                options={accountOptions}
+              />
             </div>
             <div className="field">
               <label htmlFor="t-to">Akun tujuan</label>
-              <select className="select" id="t-to" name="transfer_to_id" required defaultValue={transaction?.legs?.find((l) => l.direction === 'in')?.account_id ?? ''}>
-                <option value="" disabled>Pilih akun tujuan…</option>
-                {activeAccounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
+              <AppSelect
+                id="t-to"
+                name="transfer_to_id"
+                defaultValue={transaction?.legs?.find((l) => l.direction === 'in')?.account_id ?? ''}
+                placeholder="Pilih akun tujuan…"
+                aria-label="Akun tujuan"
+                options={accountOptions}
+              />
             </div>
           </>
         ) : (
           <div className="field">
             <label htmlFor="t-account">Akun</label>
-            <select className="select" id="t-account" name="account_id" required defaultValue={transaction?.legs?.[0]?.account_id ?? ''}>
-              <option value="" disabled>Pilih akun…</option>
-              {activeAccounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-            </select>
+            <AppSelect
+              id="t-account"
+              name="account_id"
+              defaultValue={transaction?.legs?.[0]?.account_id ?? ''}
+              placeholder="Pilih akun…"
+              aria-label="Akun transaksi"
+              options={accountOptions}
+            />
           </div>
         )}
 
         {mode === 'adjustment' ? (
           <div className="field">
             <label htmlFor="t-direction">Arah penyesuaian</label>
-            <select className="select" id="t-direction" name="leg_direction"
-              defaultValue={transaction?.legs?.[0]?.direction ?? 'in'}>
-              <option value="in">Tambah saldo (+)</option>
-              <option value="out">Kurangi saldo (−)</option>
-            </select>
+            <AppSelect
+              id="t-direction"
+              name="leg_direction"
+              defaultValue={transaction?.legs?.[0]?.direction ?? 'in'}
+              aria-label="Arah penyesuaian"
+              options={[
+                { value: 'in', label: 'Tambah saldo (+)' },
+                { value: 'out', label: 'Kurangi saldo (−)' },
+              ]}
+            />
             <small>Koreksi saldo akun tanpa transaksi baru, mis. dana masuk tak tercatat.</small>
           </div>
         ) : null}
@@ -204,10 +242,17 @@ export default function TransactionForm({
         {mode !== 'transfer' && mode !== 'adjustment' ? (
           <div className="field">
             <label htmlFor="t-category">Kategori</label>
-            <select className="select" id="t-category" name="category_id" defaultValue={transaction?.category_id ?? ''}>
-              <option value="">Tanpa kategori</option>
-              {categoriesForMode.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+            <AppSelect
+              id="t-category"
+              name="category_id"
+              defaultValue={transaction?.category_id ?? 'none'}
+              placeholder="Tanpa kategori"
+              aria-label="Kategori transaksi"
+              options={[
+                { value: 'none', label: 'Tanpa kategori' },
+                ...categoriesForMode.map((c) => ({ value: c.id, label: c.name, dot: c.color })),
+              ]}
+            />
           </div>
         ) : null}
 

@@ -1,7 +1,9 @@
 'use client'
 
-import { useRef, useState, useTransition } from 'react'
+import { useMemo, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import AppSelect from '@/components/app-select'
+import { ACCOUNT_TYPE_ICONS } from '@/lib/finance-icons'
 import { createTemplateAction, deleteTemplateAction, recordOccurrenceAction, toggleTemplateAction, updateTemplateAction, type TemplatePayload } from '@/lib/actions/recurring'
 import { parseIDRInput } from '@/lib/format'
 import type { Account, Category, RecurringTemplate } from '@/lib/types'
@@ -42,6 +44,15 @@ export default function TemplateForm({
   const expenseCategories = categories.filter((c) => c.is_active && (c.category_kind === 'expense' || c.category_kind === 'both'))
   const incomeCategories = categories.filter((c) => c.is_active && (c.category_kind === 'income' || c.category_kind === 'both'))
 
+  const accountOptions = useMemo(
+    () =>
+      activeAccounts.map((a) => {
+        const TypeIcon = ACCOUNT_TYPE_ICONS[a.account_type]
+        return { value: a.id, label: a.name, icon: <TypeIcon size={14} weight="regular" aria-hidden="true" /> }
+      }),
+    [activeAccounts],
+  )
+
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
@@ -51,8 +62,17 @@ export default function TemplateForm({
       setError('Nominal wajib diisi dan lebih dari nol.')
       return
     }
+    if (type === 'transfer' && (!String(fd.get('transfer_from_id') ?? '') || !String(fd.get('transfer_to_id') ?? ''))) {
+      setError('Pilih akun sumber dan tujuan terlebih dahulu.')
+      return
+    }
+    if (type !== 'transfer' && !String(fd.get('account_id') ?? '')) {
+      setError('Pilih akun terlebih dahulu.')
+      return
+    }
 
     const reminders = OFFSET_OPTIONS.filter((o) => fd.getAll('reminder_offsets').includes(String(o.value))).map((o) => o.value)
+    const rawCategoryId = String(fd.get('category_id') ?? '')
 
     const payload: TemplatePayload = {
       name: String(fd.get('name') ?? '').trim(),
@@ -61,7 +81,7 @@ export default function TemplateForm({
       account_id: type === 'transfer' ? null : (String(fd.get('account_id') ?? '') || null),
       transfer_from_id: type === 'transfer' ? (String(fd.get('transfer_from_id') ?? '') || null) : null,
       transfer_to_id: type === 'transfer' ? (String(fd.get('transfer_to_id') ?? '') || null) : null,
-      category_id: type === 'expense' ? (String(fd.get('category_id') ?? '') || null) : null,
+      category_id: type === 'expense' ? (rawCategoryId && rawCategoryId !== 'none' ? rawCategoryId : null) : null,
       frequency: String(fd.get('frequency') ?? 'monthly') as TemplatePayload['frequency'],
       interval_value: Math.max(1, parseInt(String(fd.get('interval_value') ?? '1'), 10) || 1),
       start_date: String(fd.get('start_date') ?? ''),
@@ -125,44 +145,67 @@ export default function TemplateForm({
           <>
             <div className="field">
               <label htmlFor="tpl-from">Akun sumber</label>
-              <select className="select" id="tpl-from" name="transfer_from_id" required defaultValue={template?.transfer_from_id ?? ''}>
-                <option value="" disabled>Pilih akun…</option>
-                {activeAccounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
+              <AppSelect
+                id="tpl-from"
+                name="transfer_from_id"
+                defaultValue={template?.transfer_from_id ?? ''}
+                placeholder="Pilih akun…"
+                aria-label="Akun sumber"
+                options={accountOptions}
+              />
             </div>
             <div className="field">
               <label htmlFor="tpl-to">Akun tujuan</label>
-              <select className="select" id="tpl-to" name="transfer_to_id" required defaultValue={template?.transfer_to_id ?? ''}>
-                <option value="" disabled>Pilih akun…</option>
-                {activeAccounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
+              <AppSelect
+                id="tpl-to"
+                name="transfer_to_id"
+                defaultValue={template?.transfer_to_id ?? ''}
+                placeholder="Pilih akun…"
+                aria-label="Akun tujuan"
+                options={accountOptions}
+              />
             </div>
           </>
         ) : (
           <div className="field">
             <label htmlFor="tpl-account">Akun</label>
-            <select className="select" id="tpl-account" name="account_id" required defaultValue={template?.account_id ?? ''}>
-              <option value="" disabled>Pilih akun…</option>
-              {activeAccounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-            </select>
+            <AppSelect
+              id="tpl-account"
+              name="account_id"
+              defaultValue={template?.account_id ?? ''}
+              placeholder="Pilih akun…"
+              aria-label="Akun template"
+              options={accountOptions}
+            />
           </div>
         )}
 
         {type !== 'transfer' ? (
           <div className="field">
             <label htmlFor="tpl-category">Kategori</label>
-            <select className="select" id="tpl-category" name="category_id" defaultValue={template?.category_id ?? ''}>
-              <option value="">Tanpa kategori</option>
-              {(type === 'income' ? incomeCategories : expenseCategories).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+            <AppSelect
+              id="tpl-category"
+              name="category_id"
+              defaultValue={template?.category_id ?? 'none'}
+              placeholder="Tanpa kategori"
+              aria-label="Kategori template"
+              options={[
+                { value: 'none', label: 'Tanpa kategori' },
+                ...(type === 'income' ? incomeCategories : expenseCategories).map((c) => ({ value: c.id, label: c.name, dot: c.color })),
+              ]}
+            />
           </div>
         ) : <div className="field"><label>&nbsp;</label></div>}
 
         <div className="field">
           <label htmlFor="tpl-frequency">Frekuensi</label>
-          <select className="select" id="tpl-frequency" name="frequency" defaultValue={template?.frequency ?? 'monthly'}>
-            {FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
-          </select>
+          <AppSelect
+            id="tpl-frequency"
+            name="frequency"
+            defaultValue={template?.frequency ?? 'monthly'}
+            aria-label="Frekuensi"
+            options={FREQUENCIES}
+          />
         </div>
 
         <div className="field">

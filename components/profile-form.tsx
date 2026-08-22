@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import AppSelect from '@/components/app-select'
 import { updateProfileAction } from '@/lib/actions/settings'
 import type { Profile } from '@/lib/types'
 
@@ -64,21 +65,26 @@ export default function ProfileForm({ profile, redirectTo }: { profile: Profile 
 
       <div className="field">
         <label htmlFor="timezone">Zona waktu</label>
-        <select className="select" id="timezone" name="timezone" defaultValue={profile?.timezone ?? 'Asia/Jakarta'} aria-describedby="timezone-help">
-          {TIMEZONES.map((tz) => (
-            <option key={tz} value={tz}>{tz}</option>
-          ))}
-        </select>
+        <AppSelect
+          id="timezone"
+          name="timezone"
+          defaultValue={profile?.timezone ?? 'Asia/Jakarta'}
+          aria-label="Zona waktu"
+          aria-describedby="timezone-help"
+          options={TIMEZONES.map((tz) => ({ value: tz, label: tz }))}
+        />
         <small id="timezone-help">Digunakan untuk menghitung periode harian, bulanan, dan pengingat.</small>
       </div>
 
       <div className="field">
         <label htmlFor="locale">Format angka & tanggal</label>
-        <select className="select" id="locale" name="locale" defaultValue={profile?.locale ?? 'id-ID'}>
-          {LOCALES.map((l) => (
-            <option key={l.value} value={l.value}>{l.label}</option>
-          ))}
-        </select>
+        <AppSelect
+          id="locale"
+          name="locale"
+          defaultValue={profile?.locale ?? 'id-ID'}
+          aria-label="Format angka dan tanggal"
+          options={LOCALES}
+        />
       </div>
 
       <div className="settings-footer">

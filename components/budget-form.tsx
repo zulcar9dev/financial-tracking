@@ -3,8 +3,9 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, X } from '@phosphor-icons/react'
+import AppSelect from '@/components/app-select'
 import { createBudgetAction, deleteBudgetAction, updateBudgetAction, type BudgetPayload } from '@/lib/actions/budgets'
-import { parseIDRInput } from '@/lib/format'
+import { formatIDRFull, parseIDRInput } from '@/lib/format'
 import type { Budget, BudgetAllocation, BudgetModel, Category } from '@/lib/types'
 
 const MODELS: { key: BudgetModel; label: string }[] = [
@@ -53,6 +54,14 @@ export default function BudgetForm({
     const target = model === 'envelope' ? null : parseIDRInput(targetText)
     if (model !== 'envelope' && !target) {
       setError('Target nominal wajib diisi.')
+      return
+    }
+    if (model === 'monthly_category' && !String(fd.get('category_id') ?? '')) {
+      setError('Pilih kategori terlebih dahulu.')
+      return
+    }
+    if (model === 'envelope' && rows.some((r) => !r.category_id || !r.allocated)) {
+      setError('Lengkapi semua baris alokasi atau hapus baris yang kosong.')
       return
     }
 
@@ -137,10 +146,14 @@ export default function BudgetForm({
         {model === 'monthly_category' ? (
           <div className="field">
             <label htmlFor="budget-category">Kategori</label>
-            <select className="select" id="budget-category" name="category_id" required defaultValue={budget?.category_id ?? ''}>
-              <option value="" disabled>Pilih kategori…</option>
-              {expenseCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+            <AppSelect
+              id="budget-category"
+              name="category_id"
+              defaultValue={budget?.category_id ?? ''}
+              placeholder="Pilih kategori…"
+              aria-label="Kategori anggaran"
+              options={expenseCategories.map((c) => ({ value: c.id, label: c.name, dot: c.color }))}
+            />
           </div>
         ) : (
           <div className="field"><label>&nbsp;</label><small style={{ alignSelf: 'center' }}>
@@ -172,21 +185,34 @@ export default function BudgetForm({
         {model === 'envelope' ? (
           <div className="field full">
             <label>Alokasi per kategori</label>
-            <div style={{ display: 'grid', gap: 8 }}>
+            <div className="allocation-list">
               {rows.map((row, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 150px 36px', gap: 8 }}>
-                  <select className="select" value={row.category_id} required
-                    onChange={(e) => setRow(i, { category_id: e.target.value })}>
-                    <option value="" disabled>Pilih kategori…</option>
-                    {expenseCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
+                <div key={i} className="allocation-row">
+                  <AppSelect
+                    aria-label={`Kategori alokasi ${i + 1}`}
+                    value={row.category_id}
+                    onValueChange={(v) => setRow(i, { category_id: v })}
+                    placeholder="Pilih kategori…"
+                    options={expenseCategories.map((c) => ({
+                      value: c.id,
+                      label: c.name,
+                      dot: c.color,
+                      disabled: rows.some((r, idx) => idx !== i && r.category_id === c.id),
+                    }))}
+                  />
                   <input className="input" type="text" inputMode="numeric" placeholder="Nominal"
-                    value={row.allocated} required
+                    value={row.allocated}
                     onChange={(e) => setRow(i, { allocated: e.target.value.replace(/\D/g, '') })} />
-                  <button type="button" className="page-button ghost" aria-label="Hapus baris"
-                     onClick={() => setRows((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))}><X size={16} weight="regular" aria-hidden="true" /></button>
+                  <button type="button" className="allocation-remove" aria-label="Hapus baris"
+                    onClick={() => setRows((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))}>
+                    <X size={15} weight="bold" aria-hidden="true" />
+                  </button>
                 </div>
               ))}
+              <div className="allocation-summary">
+                <span>{rows.filter((r) => r.category_id).length} kategori dialokasikan</span>
+                <strong>{formatIDRFull(rows.reduce((sum, r) => sum + (parseIDRInput(r.allocated) ?? 0), 0))}</strong>
+              </div>
               <button type="button" className="page-button ghost" style={{ justifySelf: 'start' }}
                 onClick={() => setRows((prev) => [...prev, { category_id: '', allocated: '' }])}>
                 <Plus size={16} weight="regular" aria-hidden="true" /> Tambah alokasi
